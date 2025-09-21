@@ -19,27 +19,67 @@ A comprehensive Python application for simulating Deterministic Finite Automata 
 
 ## Quick Start
 
+### Using the Modular Architecture (Recommended)
+
 1. **Run the interactive simulator:**
+```bash
+python main.py
+```
+
+2. **Run demonstrations:**
+```bash
+python demo.py
+```
+
+### Using Legacy Files (Deprecated)
+
+1. **Run the legacy simulator:**
 ```bash
 python afd_simulator.py
 ```
 
-2. **Test with examples:**
+2. **Test with legacy examples:**
 ```bash
 python test_examples.py
 ```
 
 ## File Structure
 
-- `afd_simulator.py` - Main interactive application
-- `afd.py` - Core DFA class implementation
-- `test_examples.py` - Demonstration script with example automata
-- `examples/` - Directory containing example AFD definitions
-  - `binary_afd.json` - Accepts strings ending with '1'
-  - `even_length.json` - Accepts strings of even length
-  - `ends_with_01.json` - Accepts strings ending with '01'
-- `README.md` - This documentation
-- `requirements.txt` - Project dependencies
+### Modular Architecture
+
+```
+project_AFD/
+├── afd_simulator/              # Main package
+│   ├── __init__.py            # Package initialization
+│   ├── core/                  # Core AFD implementation
+│   │   ├── __init__.py
+│   │   └── afd.py            # AFD class implementation
+│   ├── ui/                    # User interface components
+│   │   ├── __init__.py
+│   │   ├── simulator.py      # Main simulator class
+│   │   ├── input_handler.py  # Input validation and handling
+│   │   └── menu_system.py    # Menu display and navigation
+│   ├── utils/                 # Utility functions
+│   │   ├── __init__.py
+│   │   ├── validators.py     # Input and AFD validation
+│   │   └── formatters.py     # Output formatting utilities
+│   └── examples/              # Example AFDs and factory
+│       ├── __init__.py
+│       ├── factory.py        # AFD factory for common patterns
+│       └── loader.py         # Example loading utilities
+├── examples/                   # Example AFD definitions (JSON)
+│   ├── binary_afd.json       # Accepts strings ending with '1'
+│   ├── even_length.json      # Accepts strings of even length
+│   ├── ends_with_01.json     # Accepts strings ending with '01'
+│   └── exactly_two_as.json   # Accepts strings with exactly two 'a's
+├── main.py                    # Main application entry point
+├── demo.py                    # Demonstration script
+├── afd_simulator.py          # Legacy main file (deprecated)
+├── afd.py                    # Legacy AFD file (deprecated)
+├── test_examples.py          # Legacy test script (deprecated)
+├── README.md                 # This documentation
+└── requirements.txt          # Project dependencies
+```
 
 ## Example Usage
 
@@ -84,11 +124,23 @@ The simulator can automatically generate accepted strings:
 
 ## Technical Implementation
 
+### Modular Architecture Benefits
+
+- **Separation of Concerns**: Core logic, UI, utilities, and examples are separated
+- **Maintainability**: Easy to modify individual components without affecting others
+- **Extensibility**: Simple to add new features or AFD patterns
+- **Testability**: Each module can be tested independently
+- **Reusability**: Components can be imported and used in other projects
+
+### Core Components
+
 - **State Management**: Uses Python sets for efficient state operations
 - **Transition Function**: Implemented as dictionary for O(1) lookup
 - **String Generation**: BFS algorithm ensures shortest strings first
 - **Validation**: Comprehensive checking of all DFA requirements
 - **Persistence**: JSON format for human-readable storage
+- **Input Handling**: Robust validation with user-friendly error messages
+- **Factory Pattern**: Easy creation of common AFD patterns
 
 ## Educational Value
 
