@@ -1,16 +1,27 @@
 # AFD Simulator - Deterministic Finite Automaton Simulator
 
-A comprehensive Python application for simulating Deterministic Finite Automata (DFA). This simulator allows users to define, save, load, and evaluate DFAs, as well as generate strings that belong to the language recognized by the automaton.
+A comprehensive Python application for simulating Deterministic Finite Automata (DFA). This simulator provides both console and graphical interfaces for defining, visualizing, and analyzing DFAs with advanced features for educational and research purposes.
 
 ## Features
 
+### Core Functionality
 - **Complete AFD Definition**: Define all five components of a DFA (states Q, alphabet Σ, initial state q₀, accepting states F, transition function δ)
 - **Interactive String Evaluation**: Evaluate strings with detailed step-by-step visualization of state transitions
 - **Automatic String Generation**: Generate the first 10 shortest strings accepted by the automaton using BFS algorithm
 - **Data Persistence**: Save and load DFA configurations in JSON format
 - **Robust Validation**: Comprehensive validation with detailed error reporting
-- **User-Friendly Interface**: Intuitive console interface with help system
-- **Example Automata**: Pre-loaded examples demonstrating common DFA patterns
+
+### User Interfaces
+- **Graphical User Interface (GUI)**: Modern Tkinter-based interface with visual AFD editing and visualization
+- **Console Interface**: Command-line interface for quick operations and scripting
+- **Visual AFD Editor**: Drag-and-drop style editing with real-time validation
+- **Interactive Visualizer**: Graphical representation of AFDs with states, transitions, and flow
+
+### Advanced Features
+- **Factory Pattern**: Pre-built common AFD patterns (ending with 1, even length, contains substring, etc.)
+- **Batch Processing**: Evaluate multiple strings simultaneously
+- **Export/Import**: JSON-based file format for sharing AFD definitions
+- **Educational Examples**: Built-in examples demonstrating various automata concepts
 
 ## Requirements
 
@@ -19,9 +30,23 @@ A comprehensive Python application for simulating Deterministic Finite Automata 
 
 ## Quick Start
 
-### Using the Modular Architecture (Recommended)
+### Graphical User Interface (Recommended)
 
-1. **Run the interactive simulator:**
+1. **Launch the GUI application:**
+```bash
+python gui_main.py
+```
+
+2. **Features available in GUI:**
+   - Visual AFD editor with drag-and-drop interface
+   - Real-time AFD visualization with states and transitions
+   - Step-by-step string evaluation
+   - Batch string processing
+   - Built-in examples and factory patterns
+
+### Console Interface
+
+1. **Run the console simulator:**
 ```bash
 python main.py
 ```
@@ -31,16 +56,19 @@ python main.py
 python demo.py
 ```
 
-### Using Legacy Files (Deprecated)
+### Programming Interface
 
-1. **Run the legacy simulator:**
-```bash
-python afd_simulator.py
-```
+```python
+from afd_simulator import AFD, AFDFactory
 
-2. **Test with legacy examples:**
-```bash
-python test_examples.py
+# Create an AFD using factory
+afd = AFDFactory.create_binary_ending_with_one()
+
+# Evaluate a string
+is_accepted, path = afd.evaluate_string("101")
+
+# Generate accepted strings
+accepted = afd.generate_accepted_strings(10)
 ```
 
 ## File Structure
@@ -54,11 +82,17 @@ project_AFD/
 │   ├── core/                  # Core AFD implementation
 │   │   ├── __init__.py
 │   │   └── afd.py            # AFD class implementation
-│   ├── ui/                    # User interface components
+│   ├── ui/                    # Console interface components
 │   │   ├── __init__.py
-│   │   ├── simulator.py      # Main simulator class
+│   │   ├── simulator.py      # Console simulator class
 │   │   ├── input_handler.py  # Input validation and handling
 │   │   └── menu_system.py    # Menu display and navigation
+│   ├── gui/                   # Graphical user interface
+│   │   ├── __init__.py
+│   │   ├── main_window.py    # Main GUI window
+│   │   ├── afd_editor.py     # Visual AFD editor
+│   │   ├── string_evaluator.py # String evaluation interface
+│   │   └── afd_visualizer.py # AFD visualization component
 │   ├── utils/                 # Utility functions
 │   │   ├── __init__.py
 │   │   ├── validators.py     # Input and AFD validation
@@ -72,30 +106,52 @@ project_AFD/
 │   ├── even_length.json      # Accepts strings of even length
 │   ├── ends_with_01.json     # Accepts strings ending with '01'
 │   └── exactly_two_as.json   # Accepts strings with exactly two 'a's
-├── main.py                    # Main application entry point
-├── demo.py                    # Demonstration script
-├── afd_simulator.py          # Legacy main file (deprecated)
-├── afd.py                    # Legacy AFD file (deprecated)
-├── test_examples.py          # Legacy test script (deprecated)
+├── gui_main.py               # GUI application entry point
+├── main.py                   # Console application entry point
+├── demo.py                   # Demonstration script
 ├── README.md                 # This documentation
 └── requirements.txt          # Project dependencies
 ```
 
-## Example Usage
+## Usage Examples
 
-### Creating an AFD
-1. Choose option 1 from the main menu
-2. Define states: `q0 q1 q2`
-3. Define alphabet: `0 1`
-4. Set initial state: `q0`
-5. Set accepting states: `q2`
-6. Add transitions:
-   - `q0 0 q1`
-   - `q0 1 q0`
-   - `q1 0 q1`
-   - `q1 1 q2`
-   - `q2 0 q2`
-   - `q2 1 q0`
+### GUI Interface
+
+The graphical interface provides three main tabs:
+
+1. **AFD Editor**: Create and edit AFD definitions visually
+   - Add states and alphabet symbols
+   - Set initial and accepting states
+   - Define transitions with dropdown menus
+   - Real-time validation and summary
+
+2. **String Evaluator**: Test strings against your AFD
+   - Single string evaluation with step-by-step process
+   - Batch evaluation of multiple strings
+   - Visual feedback for accepted/rejected strings
+
+3. **AFD Visualizer**: See your AFD graphically
+   - States represented as circles
+   - Accepting states as double circles
+   - Initial state highlighted in red
+   - Transitions as arrows with symbols
+   - Zoom and pan capabilities
+
+### Console Interface
+
+1. **Creating an AFD**:
+   - Choose option 1 from the main menu
+   - Define states: `q0 q1 q2`
+   - Define alphabet: `0 1`
+   - Set initial state: `q0`
+   - Set accepting states: `q2`
+   - Add transitions:
+     - `q0 0 q1`
+     - `q0 1 q0`
+     - `q1 0 q1`
+     - `q1 1 q2`
+     - `q2 0 q2`
+     - `q2 1 q0`
 
 ### Evaluating Strings
 The simulator will show step-by-step transitions:
@@ -141,6 +197,14 @@ The simulator can automatically generate accepted strings:
 - **Persistence**: JSON format for human-readable storage
 - **Input Handling**: Robust validation with user-friendly error messages
 - **Factory Pattern**: Easy creation of common AFD patterns
+
+### GUI Implementation
+
+- **Tkinter Framework**: Cross-platform GUI using Python's standard library
+- **Modular Design**: Separate components for editing, evaluation, and visualization
+- **Visual Editor**: Intuitive form-based AFD creation with real-time validation
+- **Interactive Visualization**: Canvas-based drawing with zoom, pan, and layout algorithms
+- **Responsive Layout**: Adaptive interface that works on different screen sizes
 
 ## Educational Value
 

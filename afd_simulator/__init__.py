@@ -19,4 +19,9 @@ __author__ = "AFD Simulator Team"
 from .core.afd import AFD
 from .ui.simulator import AFDSimulator
 
-__all__ = ["AFD", "AFDSimulator"]
+# Import GUI classes (optional - may not be available on all systems)
+try:
+    from .gui.main_window import AFDSimulatorGUI
+    __all__ = ["AFD", "AFDSimulator", "AFDSimulatorGUI"]
+except ImportError:
+    __all__ = ["AFD", "AFDSimulator"]
