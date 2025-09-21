@@ -1,0 +1,12 @@
+{
+  "states": ["q0", "q1"],
+  "alphabet": ["a", "b"],
+  "initial_state": "q0",
+  "accepting_states": ["q0"],
+  "transitions": {
+    "q0,a": "q1",
+    "q0,b": "q1",
+    "q1,a": "q0",
+    "q1,b": "q0"
+  }
+}
