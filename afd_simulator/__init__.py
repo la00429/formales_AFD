@@ -18,10 +18,15 @@ __author__ = "AFD Simulator Team"
 # Import main classes for easy access
 from .core.afd import AFD
 from .ui.simulator import AFDSimulator
+from .examples import AFDFactory, ExampleLoader
+from .data import get_example_path, get_available_examples
+from .entry_points import run_console_app, run_gui_app, run_demo_app
 
 # Import GUI classes (optional - may not be available on all systems)
 try:
     from .gui.main_window import AFDSimulatorGUI
-    __all__ = ["AFD", "AFDSimulator", "AFDSimulatorGUI"]
+    __all__ = ["AFD", "AFDSimulator", "AFDSimulatorGUI", "AFDFactory", "ExampleLoader", 
+               "get_example_path", "get_available_examples", "run_console_app", "run_gui_app", "run_demo_app"]
 except ImportError:
-    __all__ = ["AFD", "AFDSimulator"]
+    __all__ = ["AFD", "AFDSimulator", "AFDFactory", "ExampleLoader", 
+               "get_example_path", "get_available_examples", "run_console_app", "run_gui_app", "run_demo_app"]

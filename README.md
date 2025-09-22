@@ -30,31 +30,22 @@ A comprehensive Python application for simulating Deterministic Finite Automata 
 
 ## Quick Start
 
-### Graphical User Interface (Recommended)
+### Using the Main Launcher (Recommended)
 
-1. **Launch the GUI application:**
+1. **Launch different interfaces:**
 ```bash
-python gui_main.py
+python main.py                # Console interface (default)
+python main.py --gui          # GUI interface
+python main.py --demo         # Demo mode
+python main.py --console      # Console interface (explicit)
 ```
 
-2. **Features available in GUI:**
+2. **GUI Features:**
    - Visual AFD editor with drag-and-drop interface
    - Real-time AFD visualization with states and transitions
    - Step-by-step string evaluation
    - Batch string processing
    - Built-in examples and factory patterns
-
-### Console Interface
-
-1. **Run the console simulator:**
-```bash
-python main.py
-```
-
-2. **Run demonstrations:**
-```bash
-python demo.py
-```
 
 ### Programming Interface
 
@@ -71,6 +62,16 @@ is_accepted, path = afd.evaluate_string("101")
 accepted = afd.generate_accepted_strings(10)
 ```
 
+### Module Interface
+
+```bash
+# Run as Python module
+python -m afd_simulator                # Console interface (default)
+python -m afd_simulator --gui          # GUI interface
+python -m afd_simulator --demo         # Demo mode
+python -m afd_simulator --console      # Console interface (explicit)
+```
+
 ## File Structure
 
 ### Modular Architecture
@@ -79,6 +80,7 @@ accepted = afd.generate_accepted_strings(10)
 project_AFD/
 ├── afd_simulator/              # Main package
 │   ├── __init__.py            # Package initialization
+│   ├── __main__.py            # Module entry point
 │   ├── core/                  # Core AFD implementation
 │   │   ├── __init__.py
 │   │   └── afd.py            # AFD class implementation
@@ -97,18 +99,22 @@ project_AFD/
 │   │   ├── __init__.py
 │   │   ├── validators.py     # Input and AFD validation
 │   │   └── formatters.py     # Output formatting utilities
-│   └── examples/              # Example AFDs and factory
+│   ├── examples/              # Example AFDs and factory
+│   │   ├── __init__.py
+│   │   ├── factory.py        # AFD factory for common patterns
+│   │   └── loader.py         # Example loading utilities
+│   ├── data/                  # Data files and resources
+│   │   ├── __init__.py
+│   │   ├── binary_afd.json   # Example: strings ending with '1'
+│   │   ├── even_length.json  # Example: strings of even length
+│   │   ├── ends_with_01.json # Example: strings ending with '01'
+│   │   └── exactly_two_as.json # Example: exactly two 'a's
+│   └── entry_points/          # Application entry points
 │       ├── __init__.py
-│       ├── factory.py        # AFD factory for common patterns
-│       └── loader.py         # Example loading utilities
-├── examples/                   # Example AFD definitions (JSON)
-│   ├── binary_afd.json       # Accepts strings ending with '1'
-│   ├── even_length.json      # Accepts strings of even length
-│   ├── ends_with_01.json     # Accepts strings ending with '01'
-│   └── exactly_two_as.json   # Accepts strings with exactly two 'a's
-├── gui_main.py               # GUI application entry point
-├── main.py                   # Console application entry point
-├── demo.py                   # Demonstration script
+│       ├── console_app.py    # Console application entry
+│       ├── gui_app.py        # GUI application entry
+│       └── demo_app.py       # Demo application entry
+├── main.py                   # Universal application launcher
 ├── README.md                 # This documentation
 └── requirements.txt          # Project dependencies
 ```

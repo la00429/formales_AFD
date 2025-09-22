@@ -1,20 +1,15 @@
-#!/usr/bin/env python3
 """
-Demonstration script for the AFD Simulator.
+Demo application entry point for AFD Simulator.
 
-This script demonstrates the capabilities of the AFD Simulator
-using the modular architecture and example AFDs.
+This module provides demonstration functionality for the AFD Simulator
+showing various features and examples.
 """
 
 import sys
-import os
-
-# Add the current directory to Python path for imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from afd_simulator.core import AFD
-from afd_simulator.examples import AFDFactory, ExampleLoader
-from afd_simulator.utils.formatters import format_transition_path, format_accepted_strings
+from ..core import AFD
+from ..examples import AFDFactory, ExampleLoader
+from ..utils.formatters import format_transition_path, format_accepted_strings
+from ..data import get_available_examples
 
 
 def demonstrate_afd_factory():
@@ -58,7 +53,7 @@ def demonstrate_example_loader():
     print("EXAMPLE LOADER DEMONSTRATIONS")
     print("=" * 60)
     
-    loader = ExampleLoader("examples")
+    loader = ExampleLoader("afd_simulator/data")
     
     available_examples = loader.get_available_examples()
     print(f"Available examples: {available_examples}")
@@ -128,8 +123,8 @@ def demonstrate_modular_usage():
         print(f"✗ Error loading: {e}")
 
 
-def main():
-    """Main demonstration function."""
+def run_demo_app():
+    """Run the demo AFD Simulator application."""
     print("AFD SIMULATOR - MODULAR ARCHITECTURE DEMONSTRATION")
     
     try:
@@ -141,7 +136,9 @@ def main():
         print("DEMONSTRATION COMPLETED")
         print("=" * 60)
         print("\nTo run the interactive simulator, execute:")
-        print("python main.py")
+        print("python -m afd_simulator.entry_points.console_app")
+        print("\nTo run the GUI simulator, execute:")
+        print("python -m afd_simulator.entry_points.gui_app")
         
     except Exception as e:
         print(f"Demonstration error: {e}")
@@ -149,4 +146,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_demo_app()

@@ -15,7 +15,7 @@ class ExampleLoader:
     Handles loading and management of example AFD definitions.
     """
     
-    def __init__(self, examples_directory: str = "examples"):
+    def __init__(self, examples_directory: str = "afd_simulator/data"):
         """
         Initialize the example loader.
         
