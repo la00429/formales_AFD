@@ -10,6 +10,7 @@ from tkinter import ttk, messagebox
 from typing import Optional, List, Tuple
 
 from ..core.afd import AFD
+from .i18n import *
 
 
 class StringEvaluator:
@@ -34,62 +35,62 @@ class StringEvaluator:
     def create_widgets(self):
         """Create all GUI widgets."""
         # Input section
-        self.input_frame = ttk.LabelFrame(self.parent, text="String Evaluation", padding=10)
-        self.input_label = ttk.Label(self.input_frame, text="Enter string to evaluate:")
+        self.input_frame = ttk.LabelFrame(self.parent, text=STRING_EVALUATION, padding=10)
+        self.input_label = ttk.Label(self.input_frame, text=ENTER_STRING_TO_EVALUATE)
         self.string_entry = ttk.Entry(self.input_frame, width=40)
-        self.evaluate_btn = ttk.Button(self.input_frame, text="Evaluate", command=self.evaluate_string)
-        self.clear_btn = ttk.Button(self.input_frame, text="Clear", command=self.clear_evaluation)
+        self.evaluate_btn = ttk.Button(self.input_frame, text=EVALUATE, command=self.evaluate_string)
+        self.clear_btn = ttk.Button(self.input_frame, text=CLEAR, command=self.clear_evaluation)
         
         # Results section
-        self.results_frame = ttk.LabelFrame(self.parent, text="Evaluation Results", padding=10)
-        self.result_label = ttk.Label(self.results_frame, text="No string evaluated yet")
+        self.results_frame = ttk.LabelFrame(self.parent, text=EVALUATION_RESULTS, padding=10)
+        self.result_label = ttk.Label(self.results_frame, text=NO_STRING_EVALUATED)
         self.result_label.config(font=("Arial", 12, "bold"))
         
         # Step-by-step visualization
-        self.steps_frame = ttk.LabelFrame(self.parent, text="Step-by-Step Process", padding=10)
+        self.steps_frame = ttk.LabelFrame(self.parent, text=STEP_BY_STEP_PROCESS, padding=10)
         self.steps_tree = ttk.Treeview(
             self.steps_frame, 
-            columns=("Step", "From", "Symbol", "To", "Description"), 
+            columns=(STEP, FROM, SYMBOL, TO, DESCRIPTION), 
             show="headings", 
             height=10
         )
         
         # Configure tree columns
-        self.steps_tree.heading("Step", text="Step")
-        self.steps_tree.heading("From", text="From State")
-        self.steps_tree.heading("Symbol", text="Symbol")
-        self.steps_tree.heading("To", text="To State")
-        self.steps_tree.heading("Description", text="Description")
+        self.steps_tree.heading(STEP, text=STEP)
+        self.steps_tree.heading(FROM, text=FROM)
+        self.steps_tree.heading(SYMBOL, text=SYMBOL)
+        self.steps_tree.heading(TO, text=TO)
+        self.steps_tree.heading(DESCRIPTION, text=DESCRIPTION)
         
-        self.steps_tree.column("Step", width=50)
-        self.steps_tree.column("From", width=80)
-        self.steps_tree.column("Symbol", width=60)
-        self.steps_tree.column("To", width=80)
-        self.steps_tree.column("Description", width=300)
+        self.steps_tree.column(STEP, width=50)
+        self.steps_tree.column(FROM, width=80)
+        self.steps_tree.column(SYMBOL, width=60)
+        self.steps_tree.column(TO, width=80)
+        self.steps_tree.column(DESCRIPTION, width=300)
         
         # Batch evaluation section
-        self.batch_frame = ttk.LabelFrame(self.parent, text="Batch String Evaluation", padding=10)
-        self.batch_label = ttk.Label(self.batch_frame, text="Enter multiple strings (one per line):")
+        self.batch_frame = ttk.LabelFrame(self.parent, text=BATCH_STRING_EVALUATION, padding=10)
+        self.batch_label = ttk.Label(self.batch_frame, text=ENTER_MULTIPLE_STRINGS)
         self.batch_text = tk.Text(self.batch_frame, height=6, width=50)
-        self.batch_evaluate_btn = ttk.Button(self.batch_frame, text="Evaluate All", command=self.evaluate_batch)
-        self.batch_clear_btn = ttk.Button(self.batch_frame, text="Clear", command=self.clear_batch)
+        self.batch_evaluate_btn = ttk.Button(self.batch_frame, text=EVALUATE_ALL, command=self.evaluate_batch)
+        self.batch_clear_btn = ttk.Button(self.batch_frame, text=CLEAR, command=self.clear_batch)
         
         # Batch results
-        self.batch_results_frame = ttk.LabelFrame(self.parent, text="Batch Results", padding=10)
+        self.batch_results_frame = ttk.LabelFrame(self.parent, text=BATCH_RESULTS, padding=10)
         self.batch_results_tree = ttk.Treeview(
             self.batch_results_frame,
-            columns=("String", "Result", "Steps"),
+            columns=(STRING, RESULT, STEPS),
             show="headings",
             height=8
         )
         
-        self.batch_results_tree.heading("String", text="String")
-        self.batch_results_tree.heading("Result", text="Result")
-        self.batch_results_tree.heading("Steps", text="Steps")
+        self.batch_results_tree.heading(STRING, text=STRING)
+        self.batch_results_tree.heading(RESULT, text=RESULT)
+        self.batch_results_tree.heading(STEPS, text=STEPS)
         
-        self.batch_results_tree.column("String", width=150)
-        self.batch_results_tree.column("Result", width=100)
-        self.batch_results_tree.column("Steps", width=80)
+        self.batch_results_tree.column(STRING, width=150)
+        self.batch_results_tree.column(RESULT, width=100)
+        self.batch_results_tree.column(STEPS, width=80)
     
     def setup_layout(self):
         """Setup the layout of widgets."""
@@ -130,23 +131,23 @@ class StringEvaluator:
         """Evaluate the entered string against the current AFD."""
         afd = self.main_app.get_current_afd()
         if not afd:
-            messagebox.showwarning("Warning", "No AFD loaded. Please create or load an AFD first.")
+            messagebox.showwarning(WARNING, "No hay AFD cargado. Crea o carga uno primero.")
             return
         
         if not afd.is_valid():
-            messagebox.showwarning("Warning", "Current AFD is not valid. Please complete the AFD definition.")
+            messagebox.showwarning(WARNING, "El AFD actual no es válido. Completa su definición.")
             return
         
         input_string = self.string_entry.get().strip()
         if not input_string:
-            messagebox.showwarning("Warning", "Please enter a string to evaluate.")
+            messagebox.showwarning(WARNING, "Ingresa una cadena para evaluar.")
             return
         
         try:
             is_accepted, transitions_path = afd.evaluate_string(input_string)
             
             # Update result label
-            result_text = f"String '{input_string}' is {'ACCEPTED' if is_accepted else 'REJECTED'}"
+            result_text = f"La cadena '{input_string}' fue {ACCEPTED if is_accepted else REJECTED}"
             self.result_label.config(text=result_text)
             
             # Update result label color
@@ -160,25 +161,25 @@ class StringEvaluator:
                 self.steps_tree.delete(item)
             
             for i, (from_state, symbol, to_state) in enumerate(transitions_path, 1):
-                description = f"From state ({from_state}) with symbol '{symbol}' transitions to state ({to_state})"
+                description = f"Desde ({from_state}) con símbolo '{symbol}' transita a ({to_state})"
                 self.steps_tree.insert("", "end", values=(i, from_state, symbol, to_state, description))
             
             # Show final state
             if transitions_path:
                 final_state = transitions_path[-1][2]
-                final_description = f"Final state: {final_state} - {'Accepting' if is_accepted else 'Non-accepting'}"
+                final_description = f"Estado final: {final_state} - {ACCEPTING if is_accepted else NON_ACCEPTING}"
                 self.steps_tree.insert("", "end", values=("", "", "", final_state, final_description))
             
-            self.main_app.update_status(f"String '{input_string}' evaluated: {'ACCEPTED' if is_accepted else 'REJECTED'}")
+            self.main_app.update_status(f"Cadena '{input_string}' evaluada: {ACCEPTED if is_accepted else REJECTED}")
             
         except ValueError as e:
-            messagebox.showerror("Error", f"Evaluation failed: {e}")
-            self.result_label.config(text="Evaluation failed", foreground="red")
+            messagebox.showerror(ERROR, f"La evaluación falló: {e}")
+            self.result_label.config(text="La evaluación falló", foreground="red")
     
     def clear_evaluation(self):
         """Clear the current evaluation."""
         self.string_entry.delete(0, tk.END)
-        self.result_label.config(text="No string evaluated yet", foreground="black")
+        self.result_label.config(text=NO_STRING_EVALUATED, foreground="black")
         
         for item in self.steps_tree.get_children():
             self.steps_tree.delete(item)
@@ -187,21 +188,21 @@ class StringEvaluator:
         """Evaluate multiple strings from the batch input."""
         afd = self.main_app.get_current_afd()
         if not afd:
-            messagebox.showwarning("Warning", "No AFD loaded. Please create or load an AFD first.")
+            messagebox.showwarning(WARNING, "No hay AFD cargado. Crea o carga uno primero.")
             return
         
         if not afd.is_valid():
-            messagebox.showwarning("Warning", "Current AFD is not valid. Please complete the AFD definition.")
+            messagebox.showwarning(WARNING, "El AFD actual no es válido. Completa su definición.")
             return
         
         batch_text = self.batch_text.get("1.0", tk.END).strip()
         if not batch_text:
-            messagebox.showwarning("Warning", "Please enter strings to evaluate.")
+            messagebox.showwarning(WARNING, "Ingresa cadenas para evaluar.")
             return
         
         strings = [s.strip() for s in batch_text.split('\n') if s.strip()]
         if not strings:
-            messagebox.showwarning("Warning", "No valid strings found.")
+            messagebox.showwarning(WARNING, "No se encontraron cadenas válidas.")
             return
         
         # Clear previous batch results
@@ -212,7 +213,7 @@ class StringEvaluator:
         for string in strings:
             try:
                 is_accepted, transitions_path = afd.evaluate_string(string)
-                result = "ACCEPTED" if is_accepted else "REJECTED"
+                result = ACCEPTED if is_accepted else REJECTED
                 steps = len(transitions_path)
                 
                 self.batch_results_tree.insert("", "end", values=(string, result, steps))
@@ -220,7 +221,7 @@ class StringEvaluator:
             except ValueError as e:
                 self.batch_results_tree.insert("", "end", values=(string, f"ERROR: {e}", 0))
         
-        self.main_app.update_status(f"Batch evaluation completed: {len(strings)} strings processed")
+        self.main_app.update_status(f"Evaluación por lotes completada: {len(strings)} cadenas procesadas")
     
     def clear_batch(self):
         """Clear the batch input and results."""

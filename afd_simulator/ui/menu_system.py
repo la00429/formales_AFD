@@ -19,15 +19,15 @@ class MenuSystem:
         """Initialize the menu system."""
         self.input_handler = InputHandler()
         self.menu_items = {
-            '1': ('Create new AFD', self._placeholder_handler),
-            '2': ('Load AFD from file', self._placeholder_handler),
-            '3': ('Display current AFD', self._placeholder_handler),
-            '4': ('Evaluate string', self._placeholder_handler),
-            '5': ('Generate accepted strings', self._placeholder_handler),
-            '6': ('Save AFD to file', self._placeholder_handler),
-            '7': ('Validate AFD', self._placeholder_handler),
-            '8': ('Help', self._placeholder_handler),
-            '9': ('Exit', self._placeholder_handler)
+            '1': ('Crear nuevo AFD', self._placeholder_handler),
+            '2': ('Cargar AFD desde archivo', self._placeholder_handler),
+            '3': ('Mostrar AFD actual', self._placeholder_handler),
+            '4': ('Evaluar cadena', self._placeholder_handler),
+            '5': ('Generar cadenas aceptadas', self._placeholder_handler),
+            '6': ('Guardar AFD en archivo', self._placeholder_handler),
+            '7': ('Validar AFD', self._placeholder_handler),
+            '8': ('Ayuda', self._placeholder_handler),
+            '9': ('Salir', self._placeholder_handler)
         }
         self.handlers: Dict[str, Callable] = {}
     
@@ -43,14 +43,14 @@ class MenuSystem:
     
     def display_header(self) -> None:
         """Display the application header."""
-        print(format_menu_header("AFD SIMULATOR", 60))
-        print("    Deterministic Finite Automaton Simulator")
+        print(format_menu_header("SIMULADOR AFD", 60))
+        print("    Simulador de Autómatas Finitos Deterministas")
         print("=" * 60)
         print()
     
     def display_menu(self) -> None:
         """Display the main menu options."""
-        print("MAIN MENU:")
+        print("MENÚ PRINCIPAL:")
         for menu_id, (description, _) in self.menu_items.items():
             print(f"{menu_id}. {description}")
         print()
@@ -62,7 +62,7 @@ class MenuSystem:
         Returns:
             The user's menu selection
         """
-        return self.input_handler.get_user_input("Select an option (1-9): ")
+        return self.input_handler.get_user_input("Selecciona una opción (1-9): ")
     
     def display_section_header(self, title: str) -> None:
         """
@@ -76,7 +76,7 @@ class MenuSystem:
     def display_help(self) -> None:
         """Display help information."""
         from ..utils.formatters import format_help_text
-        self.display_section_header("HELP")
+        self.display_section_header("AYUDA")
         print(format_help_text())
     
     def confirm_exit(self) -> bool:
@@ -86,11 +86,11 @@ class MenuSystem:
         Returns:
             True if user confirms exit, False otherwise
         """
-        return self.input_handler.get_yes_no_input("Are you sure you want to exit?")
+        return self.input_handler.get_yes_no_input("¿Estás seguro de que quieres salir?")
     
     def wait_for_continue(self) -> None:
         """Wait for user to press Enter to continue."""
-        input("\nPress Enter to continue...")
+        input("\nPresiona Enter para continuar...")
         print("\n" + "=" * 60)
     
     def display_error(self, error_message: str) -> None:
@@ -118,7 +118,7 @@ class MenuSystem:
         Args:
             warning_message: The warning message to display
         """
-        print(f"⚠ Warning: {warning_message}")
+        print(f"⚠ Advertencia: {warning_message}")
     
     def display_info(self, info_message: str) -> None:
         """
@@ -148,13 +148,13 @@ class MenuSystem:
                 return True
         elif choice == '9':
             if self.confirm_exit():
-                print("Thank you for using AFD Simulator!")
+                print("¡Gracias por usar el Simulador AFD!")
                 return False
             return True
         else:
-            self.display_error("Invalid option. Please select 1-9.")
+            self.display_error("Opción inválida. Por favor selecciona 1-9.")
             return True
     
     def _placeholder_handler(self) -> None:
         """Placeholder handler for unregistered menu items."""
-        self.display_error("This functionality is not yet implemented.")
+        self.display_error("Esta funcionalidad aún no está implementada.")

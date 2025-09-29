@@ -1,3 +1,0 @@
-# Requirements for AFD Simulator
-# No external dependencies required - using only Python standard library
-# Tkinter is included with Python standard library for GUI functionality

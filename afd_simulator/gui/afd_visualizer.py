@@ -11,6 +11,7 @@ import math
 from typing import Optional, Dict, Set, Tuple
 
 from ..core.afd import AFD
+from .i18n import *
 
 
 class AFDVisualizer:
@@ -37,10 +38,10 @@ class AFDVisualizer:
         """Create all GUI widgets."""
         # Control panel
         self.control_frame = ttk.Frame(self.parent)
-        self.refresh_btn = ttk.Button(self.control_frame, text="Refresh Visualization", command=self.refresh_visualization)
-        self.zoom_in_btn = ttk.Button(self.control_frame, text="Zoom In", command=self.zoom_in)
-        self.zoom_out_btn = ttk.Button(self.control_frame, text="Zoom Out", command=self.zoom_out)
-        self.reset_zoom_btn = ttk.Button(self.control_frame, text="Reset Zoom", command=self.reset_zoom)
+        self.refresh_btn = ttk.Button(self.control_frame, text=REFRESH_VISUALIZATION, command=self.refresh_visualization)
+        self.zoom_in_btn = ttk.Button(self.control_frame, text=ZOOM_IN, command=self.zoom_in)
+        self.zoom_out_btn = ttk.Button(self.control_frame, text=ZOOM_OUT, command=self.zoom_out)
+        self.reset_zoom_btn = ttk.Button(self.control_frame, text=RESET_ZOOM, command=self.reset_zoom)
         
         # Canvas for visualization
         self.canvas_frame = ttk.Frame(self.parent)
@@ -50,18 +51,18 @@ class AFDVisualizer:
         self.canvas.configure(yscrollcommand=self.scrollbar_v.set, xscrollcommand=self.scrollbar_h.set)
         
         # Info panel
-        self.info_frame = ttk.LabelFrame(self.parent, text="AFD Information", padding=10)
+        self.info_frame = ttk.LabelFrame(self.parent, text=AFD_INFORMATION, padding=10)
         self.info_text = tk.Text(self.info_frame, height=8, width=50, state="disabled")
         
         # Visualization settings
-        self.settings_frame = ttk.LabelFrame(self.parent, text="Visualization Settings", padding=10)
+        self.settings_frame = ttk.LabelFrame(self.parent, text=VISUALIZATION_SETTINGS, padding=10)
         self.show_labels_var = tk.BooleanVar(value=True)
         self.show_initial_var = tk.BooleanVar(value=True)
         self.compact_mode_var = tk.BooleanVar(value=False)
         
-        self.show_labels_check = ttk.Checkbutton(self.settings_frame, text="Show State Labels", variable=self.show_labels_var)
-        self.show_initial_check = ttk.Checkbutton(self.settings_frame, text="Highlight Initial State", variable=self.show_initial_var)
-        self.compact_mode_check = ttk.Checkbutton(self.settings_frame, text="Compact Mode", variable=self.compact_mode_var)
+        self.show_labels_check = ttk.Checkbutton(self.settings_frame, text=SHOW_STATE_LABELS, variable=self.show_labels_var)
+        self.show_initial_check = ttk.Checkbutton(self.settings_frame, text=HIGHLIGHT_INITIAL_STATE, variable=self.show_initial_var)
+        self.compact_mode_check = ttk.Checkbutton(self.settings_frame, text=COMPACT_MODE, variable=self.compact_mode_var)
         
         # Bind events
         self.show_labels_var.trace('w', lambda *args: self.refresh_visualization())
@@ -289,19 +290,19 @@ class AFDVisualizer:
             self.info_text.insert(1.0, afd_or_message)
         else:
             afd = afd_or_message
-            info = f"""AFD Information:
-States: {len(afd.states)} ({', '.join(sorted(afd.states))})
-Alphabet: {len(afd.alphabet)} ({', '.join(sorted(afd.alphabet))})
-Initial State: {afd.initial_state or 'Not set'}
-Accepting States: {len(afd.accepting_states)} ({', '.join(sorted(afd.accepting_states))})
-Transitions: {len(afd.transitions)}
-Valid: {'Yes' if afd.is_valid() else 'No'}
+            info = f"""Información del AFD:
+Estados: {len(afd.states)} ({', '.join(sorted(afd.states))})
+Alfabeto: {len(afd.alphabet)} ({', '.join(sorted(afd.alphabet))})
+Estado inicial: {afd.initial_state or NOT_SET}
+Estados de aceptación: {len(afd.accepting_states)} ({', '.join(sorted(afd.accepting_states))})
+Transiciones: {len(afd.transitions)}
+Válido: {VALID if afd.is_valid() else INVALID}
 
-Legend:
-• Black circle: Regular state
-• Blue double circle: Accepting state
-• Red outline: Initial state
-• Arrows: Transitions with symbols"""
+Leyenda:
+• {LEGEND_BLACK_CIRCLE}
+• {LEGEND_BLUE_DOUBLE_CIRCLE}
+• {LEGEND_RED_OUTLINE}
+• {LEGEND_ARROWS}"""
             
             self.info_text.insert(1.0, info)
         

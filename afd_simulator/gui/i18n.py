@@ -1,0 +1,127 @@
+"""
+Constantes de internacionalización (i18n) para la GUI.
+
+Centraliza todos los textos de la interfaz para facilitar
+la traducción y el mantenimiento.
+"""
+
+# Textos de botones y acciones
+REMOVE_SELECTED = "Eliminar Seleccionado"
+ADD_STATES = "Agregar Estados"
+ADD_SYMBOLS = "Agregar Símbolos"
+ADD_SELECTED = "Agregar Seleccionado"
+ADD_TRANSITION = "Agregar Transición"
+VALIDATE_AFD = "Validar AFD"
+CLEAR_ALL = "Limpiar Todo"
+GENERATE_COMPLETE_AFD = "Generar AFD Completo"
+EVALUATE = "Evaluar"
+CLEAR = "Limpiar"
+EVALUATE_ALL = "Evaluar Todas"
+REFRESH_VISUALIZATION = "Actualizar Visualización"
+ZOOM_IN = "Acercar"
+ZOOM_OUT = "Alejar"
+RESET_ZOOM = "Restablecer Zoom"
+
+# Textos de etiquetas y títulos
+STATES_Q = "Estados (Q)"
+ALPHABET_SIGMA = "Alfabeto (Σ)"
+INITIAL_STATE_Q0 = "Estado Inicial (q₀)"
+ACCEPTING_STATES_F = "Estados de Aceptación (F)"
+TRANSITIONS_DELTA = "Transiciones (δ)"
+AFD_SUMMARY = "Resumen del AFD"
+STRING_EVALUATION = "Evaluación de Cadenas"
+EVALUATION_RESULTS = "Resultados de la Evaluación"
+STEP_BY_STEP_PROCESS = "Proceso Paso a Paso"
+BATCH_STRING_EVALUATION = "Evaluación por Lotes"
+BATCH_RESULTS = "Resultados por Lotes"
+AFD_INFORMATION = "Información del AFD"
+VISUALIZATION_SETTINGS = "Configuración de Visualización"
+
+# Textos de columnas de tablas
+FROM = "Desde"
+SYMBOL = "Símbolo"
+TO = "Hacia"
+DESCRIPTION = "Descripción"
+STEP = "Paso"
+STRING = "Cadena"
+RESULT = "Resultado"
+STEPS = "Pasos"
+
+# Textos de menús
+MENU_FILE = "Archivo"
+MENU_EDIT = "Editar"
+MENU_EXAMPLES = "Ejemplos"
+MENU_TOOLS = "Herramientas"
+MENU_HELP = "Ayuda"
+NEW_AFD = "Nuevo AFD"
+LOAD_AFD = "Cargar AFD..."
+SAVE_AFD = "Guardar AFD..."
+EXIT = "Salir"
+CLEAR_AFD = "Limpiar AFD"
+VALIDATE_AFD_MENU = "Validar AFD"
+STRING_EVALUATOR = "Evaluador de Cadenas"
+AFD_VISUALIZER = "Visualizador AFD"
+GENERATE_ACCEPTED_STRINGS = "Generar Cadenas Aceptadas"
+TUTORIAL = "Tutorial"
+HELP = "Ayuda"
+WHATS_NEW = "Novedades"
+ABOUT = "Acerca de"
+DOCUMENTATION = "Documentación"
+KEYBOARD_SHORTCUTS = "Atajos de Teclado"
+
+# Textos de mensajes
+NO_AFD_LOADED = "No hay AFD cargado"
+NO_STRING_EVALUATED = "Aún no se ha evaluado ninguna cadena"
+ENTER_STRING_TO_EVALUATE = "Ingresa la cadena a evaluar:"
+ENTER_MULTIPLE_STRINGS = "Ingresa múltiples cadenas (una por línea):"
+SHOW_STATE_LABELS = "Mostrar etiquetas de estados"
+HIGHLIGHT_INITIAL_STATE = "Resaltar estado inicial"
+COMPACT_MODE = "Modo compacto"
+
+# Textos de advertencias y errores
+WARNING = "Advertencia"
+ERROR = "Error"
+SUCCESS = "Éxito"
+VALIDATION = "Validación"
+ENTER_STATE_NAMES = "Ingresa nombres de estados"
+ENTER_SYMBOLS = "Ingresa símbolos del alfabeto"
+SELECT_STATE_FROM_LIST = "Selecciona un estado de la lista de estados"
+NO_STATE_SELECTED = "No hay estado seleccionado"
+SELECT_FROM_STATE = "Selecciona un estado 'Desde'"
+SELECT_SYMBOL = "Selecciona un símbolo"
+SELECT_TO_STATE = "Selecciona un estado 'Hacia'"
+NO_AFD_TO_VALIDATE = "No hay AFD para validar"
+DEFINE_STATES_AND_ALPHABET_FIRST = "Primero define estados y alfabeto"
+ARE_YOU_SURE_CLEAR_ALL = "¿Seguro que deseas limpiar todos los datos?"
+THIS_WILL_GENERATE_ALL_TRANSITIONS = "Esto generará todas las transiciones posibles. ¿Continuar?"
+
+# Textos de resultados
+ACCEPTED = "ACEPTADA"
+REJECTED = "RECHAZADA"
+ACCEPTING = "Aceptación"
+NON_ACCEPTING = "No aceptación"
+VALID = "Sí"
+INVALID = "No"
+NOT_SET = "No definido"
+
+# Textos de leyenda
+LEGEND_BLACK_CIRCLE = "Círculo negro: Estado regular"
+LEGEND_BLUE_DOUBLE_CIRCLE = "Círculo azul doble: Estado de aceptación"
+LEGEND_RED_OUTLINE = "Borde rojo: Estado inicial"
+LEGEND_ARROWS = "Flechas: Transiciones con símbolos"
+
+# Textos de estado
+READY_NO_AFD = "Listo - No hay AFD cargado"
+AFD_UPDATED = "AFD actualizado"
+ALL_DATA_CLEARED = "Datos limpiados"
+ERROR_UPDATING_AFD = "Error actualizando AFD"
+STRING_EVALUATED = "Cadena '{string}' evaluada: {result}"
+BATCH_EVALUATION_COMPLETED = "Evaluación por lotes completada: {count} cadenas procesadas"
+
+# Textos de ayuda contextual
+HELP_NO_AFD_LOADED = "No hay AFD cargado. Ve a 'Archivo > Nuevo AFD' o carga un ejemplo."
+HELP_INVALID_AFD = "El AFD actual no es válido. Revisa que todas las transiciones estén definidas."
+HELP_EMPTY_STRING = "La cadena está vacía. Ingresa una cadena para evaluar."
+HELP_INVALID_SYMBOL = "La cadena contiene símbolos no válidos para este AFD."
+HELP_AFD_COMPLETE = "¡AFD válido y completo! Puedes proceder a evaluar cadenas."
+HELP_MISSING_TRANSITIONS = "Faltan transiciones. Cada estado debe tener una transición para cada símbolo del alfabeto."

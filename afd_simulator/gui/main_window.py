@@ -16,6 +16,11 @@ from ..utils.validators import validate_afd_definition
 from .afd_editor import AFDEditor
 from .string_evaluator import StringEvaluator
 from .afd_visualizer import AFDVisualizer
+from .help_system import HelpSystem
+from .styles import StyleManager
+from .tutorial_system import TutorialSystem
+from .demo_improvements import show_improvements_demo
+from .i18n import *
 
 
 class AFDSimulatorGUI:
@@ -27,14 +32,21 @@ class AFDSimulatorGUI:
         """Initialize the GUI application."""
         self.root = tk.Tk()
         self.current_afd: Optional[AFD] = None
+        
+        # Initialize style manager and help system
+        self.style_manager = StyleManager(self.root)
+        self.help_system = HelpSystem(self.root)
+        self.tutorial_system = TutorialSystem(self.root, self)
+        
         self.setup_window()
         self.create_menu()
         self.create_main_interface()
         self.create_status_bar()
+        self.setup_help_tooltips()
     
     def setup_window(self):
         """Setup the main window properties."""
-        self.root.title("AFD Simulator - Deterministic Finite Automaton Simulator")
+        self.root.title("Simulador AFD - Autómata Finito Determinista")
         self.root.geometry("1200x800")
         self.root.minsize(800, 600)
         
@@ -49,22 +61,22 @@ class AFDSimulatorGUI:
         
         # File menu
         file_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="New AFD", command=self.new_afd)
-        file_menu.add_command(label="Load AFD...", command=self.load_afd)
-        file_menu.add_command(label="Save AFD...", command=self.save_afd)
+        menubar.add_cascade(label=MENU_FILE, menu=file_menu)
+        file_menu.add_command(label=NEW_AFD, command=self.new_afd)
+        file_menu.add_command(label=LOAD_AFD, command=self.load_afd)
+        file_menu.add_command(label=SAVE_AFD, command=self.save_afd)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.root.quit)
+        file_menu.add_command(label=EXIT, command=self.root.quit)
         
         # Edit menu
         edit_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Edit", menu=edit_menu)
-        edit_menu.add_command(label="Clear AFD", command=self.clear_afd)
-        edit_menu.add_command(label="Validate AFD", command=self.validate_afd)
+        menubar.add_cascade(label=MENU_EDIT, menu=edit_menu)
+        edit_menu.add_command(label=CLEAR_AFD, command=self.clear_afd)
+        edit_menu.add_command(label=VALIDATE_AFD_MENU, command=self.validate_afd)
         
         # Examples menu
         examples_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Examples", menu=examples_menu)
+        menubar.add_cascade(label=MENU_EXAMPLES, menu=examples_menu)
         
         # Add factory examples
         factory_examples = AFDFactory.get_available_examples()
@@ -81,22 +93,27 @@ class AFDSimulatorGUI:
         file_examples = loader.get_available_examples()
         for example_name in file_examples:
             examples_menu.add_command(
-                label=f"Load {example_name}",
+                label=f"Cargar {example_name}",
                 command=lambda n=example_name: self.load_file_example(n)
             )
         
         # Tools menu
         tools_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Tools", menu=tools_menu)
-        tools_menu.add_command(label="String Evaluator", command=self.open_string_evaluator)
-        tools_menu.add_command(label="AFD Visualizer", command=self.open_visualizer)
-        tools_menu.add_command(label="Generate Accepted Strings", command=self.generate_strings)
+        menubar.add_cascade(label=MENU_TOOLS, menu=tools_menu)
+        tools_menu.add_command(label=STRING_EVALUATOR, command=self.open_string_evaluator)
+        tools_menu.add_command(label=AFD_VISUALIZER, command=self.open_visualizer)
+        tools_menu.add_command(label=GENERATE_ACCEPTED_STRINGS, command=self.generate_strings)
         
         # Help menu
         help_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Help", menu=help_menu)
-        help_menu.add_command(label="About", command=self.show_about)
-        help_menu.add_command(label="Documentation", command=self.show_documentation)
+        menubar.add_cascade(label=MENU_HELP, menu=help_menu)
+        help_menu.add_command(label=TUTORIAL, command=self.start_tutorial)
+        help_menu.add_command(label=HELP, command=self.show_help)
+        help_menu.add_command(label=WHATS_NEW, command=self.show_improvements)
+        help_menu.add_command(label=ABOUT, command=self.show_about)
+        help_menu.add_command(label=DOCUMENTATION, command=self.show_documentation)
+        help_menu.add_separator()
+        help_menu.add_command(label=KEYBOARD_SHORTCUTS, command=self.show_shortcuts)
     
     def create_main_interface(self):
         """Create the main interface components."""
@@ -106,17 +123,17 @@ class AFDSimulatorGUI:
         
         # AFD Editor tab
         self.editor_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.editor_frame, text="AFD Editor")
+        self.notebook.add(self.editor_frame, text="Editor AFD")
         self.afd_editor = AFDEditor(self.editor_frame, self)
         
         # String Evaluator tab
         self.evaluator_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.evaluator_frame, text="String Evaluator")
+        self.notebook.add(self.evaluator_frame, text="Evaluador de Cadenas")
         self.string_evaluator = StringEvaluator(self.evaluator_frame, self)
         
         # AFD Visualizer tab
         self.visualizer_frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.visualizer_frame, text="AFD Visualizer")
+        self.notebook.add(self.visualizer_frame, text="Visualizador AFD")
         self.afd_visualizer = AFDVisualizer(self.visualizer_frame, self)
         
         # Configure notebook
@@ -127,11 +144,20 @@ class AFDSimulatorGUI:
         """Create the status bar."""
         self.status_bar = ttk.Label(
             self.root, 
-            text="Ready - No AFD loaded", 
+            text="Listo - No hay AFD cargado", 
             relief=tk.SUNKEN, 
             anchor=tk.W
         )
         self.status_bar.grid(row=2, column=0, sticky="ew")
+    
+    def setup_help_tooltips(self):
+        """Setup help tooltips for main interface."""
+        # Agregar tooltips ligeros solo a contenedores principales (evitar spam)
+        try:
+            self.help_system.add_tooltip(self.notebook, "notebook_tabs")
+            self.help_system.add_tooltip(self.status_bar, "status_bar")
+        except Exception:
+            pass
     
     def update_status(self, message: str):
         """Update the status bar message."""
@@ -256,24 +282,82 @@ class AFDSimulatorGUI:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to generate strings: {e}")
     
+    def start_tutorial(self):
+        """Start the interactive tutorial."""
+        self.tutorial_system.start_tutorial()
+    
+    def show_help(self):
+        """Show main help window."""
+        self.help_system.show_help_window()
+    
+    def show_improvements(self):
+        """Show improvements demo."""
+        show_improvements_demo(self.root)
+    
+    def show_shortcuts(self):
+        """Show keyboard shortcuts dialog."""
+        shortcuts_text = """
+ATAJOS DE TECLADO - Simulador AFD
+
+GENERALES:
+• Ctrl+N: Nuevo AFD
+• Ctrl+O: Abrir AFD
+• Ctrl+S: Guardar AFD
+• Ctrl+W: Cerrar AFD
+• F1: Ayuda
+• F5: Actualizar visualización
+• Ctrl+Q: Salir
+
+EDITOR AFD:
+• Tab: Siguiente campo
+• Shift+Tab: Campo anterior
+• Enter: Agregar elemento (en campos de entrada)
+• Delete: Eliminar elemento seleccionado
+• Ctrl+A: Seleccionar todo (en listas)
+
+EVALUADOR DE CADENAS:
+• Enter: Evaluar cadena
+• Espacio: Siguiente paso
+• R: Reiniciar evaluación
+• Ctrl+Enter: Evaluar paso a paso
+
+VISUALIZADOR AFD:
+• Ctrl++: Zoom in
+• Ctrl+-: Zoom out
+• Ctrl+0: Reset zoom
+• F5: Actualizar visualización
+
+NAVEGACIÓN:
+• Ctrl+Tab: Siguiente pestaña
+• Ctrl+Shift+Tab: Pestaña anterior
+• Ctrl+1: Editor AFD
+• Ctrl+2: Evaluador de Cadenas
+• Ctrl+3: Visualizador AFD
+        """
+        messagebox.showinfo("Atajos de Teclado", shortcuts_text.strip())
+    
     def show_about(self):
         """Show about dialog."""
         about_text = """
-AFD Simulator v1.0
+AFD Simulator v2.0
 
-A comprehensive tool for simulating Deterministic Finite Automata (DFA).
+Una herramienta completa para simular Autómatas Finitos Deterministas (AFD).
 
-Features:
-• Visual AFD creation and editing
-• String evaluation with step-by-step visualization
-• Automatic string generation
-• AFD visualization and validation
-• Save and load AFD definitions
-• Built-in examples and patterns
+Características:
+• Creación y edición visual de AFDs
+• Evaluación de cadenas con visualización paso a paso
+• Generación automática de cadenas
+• Visualización y validación de AFDs
+• Guardar y cargar definiciones de AFD
+• Ejemplos integrados y patrones
+• Sistema de ayuda contextual
+• Validación en tiempo real
+• Interfaz moderna y atractiva
 
-Developed with Python and Tkinter.
+Desarrollado con Python y Tkinter.
+Versión 2.0 - Mejoras en la interfaz y experiencia de usuario
         """
-        messagebox.showinfo("About AFD Simulator", about_text.strip())
+        messagebox.showinfo("Acerca de AFD Simulator", about_text.strip())
     
     def show_documentation(self):
         """Show documentation."""
