@@ -216,13 +216,21 @@ class AFD:
         Args:
             filename: Nombre del archivo donde guardar
         """
+        # Convertir transiciones a formato más robusto
+        transitions_list = []
+        for (from_state, symbol), to_state in self.transitions.items():
+            transitions_list.append({
+                "from_state": from_state,
+                "symbol": symbol,
+                "to_state": to_state
+            })
+        
         afd_data = {
             "states": list(self.states),
             "alphabet": list(self.alphabet),
             "initial_state": self.initial_state,
             "accepting_states": list(self.accepting_states),
-            "transitions": {f"{from_state},{symbol}": to_state 
-                          for (from_state, symbol), to_state in self.transitions.items()}
+            "transitions": transitions_list
         }
         
         with open(filename, 'w', encoding='utf-8') as f:
@@ -252,17 +260,38 @@ class AFD:
         for symbol in afd_data["alphabet"]:
             afd.add_symbol(symbol)
         
-        # Carga el estado inicial
-        afd.set_initial_state(afd_data["initial_state"])
+        # Carga el estado inicial (solo si no es None)
+        if afd_data["initial_state"] is not None:
+            afd.set_initial_state(afd_data["initial_state"])
         
         # Carga los estados de aceptación
         for state in afd_data["accepting_states"]:
             afd.add_accepting_state(state)
         
         # Carga las transiciones
-        for transition_key, to_state in afd_data["transitions"].items():
-            from_state, symbol = transition_key.split(',')
-            afd.add_transition(from_state, symbol, to_state)
+        transitions = afd_data["transitions"]
+        
+        # Manejar tanto el formato antiguo (dict con claves separadas por comas) 
+        # como el nuevo formato (lista de objetos)
+        if isinstance(transitions, list):
+            # Nuevo formato: lista de objetos
+            for transition in transitions:
+                from_state = transition["from_state"]
+                symbol = transition["symbol"]
+                to_state = transition["to_state"]
+                afd.add_transition(from_state, symbol, to_state)
+        else:
+            # Formato antiguo: diccionario con claves separadas por comas
+            # Usar un separador más robusto para manejar comas en nombres
+            # Buscar la última coma que separa el estado del símbolo
+            for transition_key, to_state in transitions.items():
+                last_comma_index = transition_key.rfind(',')
+                if last_comma_index == -1:
+                    raise ValueError(f"Formato de transición inválido: {transition_key}")
+                
+                from_state = transition_key[:last_comma_index]
+                symbol = transition_key[last_comma_index + 1:]
+                afd.add_transition(from_state, symbol, to_state)
         
         return afd
     
