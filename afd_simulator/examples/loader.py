@@ -1,8 +1,8 @@
 """
-Example loader for AFD Simulator.
+Cargador de ejemplos para el Simulador de AFD.
 
-This module provides functionality to load example AFD definitions
-from files and manage example collections.
+Este módulo proporciona funcionalidad para cargar definiciones de AFD de ejemplo
+desde archivos y gestionar colecciones de ejemplos.
 """
 
 import os
@@ -12,24 +12,24 @@ from ..core.afd import AFD
 
 class ExampleLoader:
     """
-    Handles loading and management of example AFD definitions.
+    Maneja la carga y gestión de definiciones de AFD de ejemplo.
     """
     
     def __init__(self, examples_directory: str = "afd_simulator/data"):
         """
-        Initialize the example loader.
+        Inicializa el cargador de ejemplos.
         
         Args:
-            examples_directory: Directory containing example files
+            examples_directory: Directorio que contiene los archivos de ejemplo
         """
         self.examples_directory = examples_directory
     
     def get_available_examples(self) -> List[str]:
         """
-        Get a list of available example files.
+        Obtiene una lista de archivos de ejemplo disponibles.
         
         Returns:
-            List of example filenames (without extension)
+            Lista de nombres de archivos de ejemplo (sin extensión)
         """
         if not os.path.exists(self.examples_directory):
             return []
@@ -37,39 +37,39 @@ class ExampleLoader:
         examples = []
         for filename in os.listdir(self.examples_directory):
             if filename.endswith('.json'):
-                examples.append(filename[:-5])  # Remove .json extension
+                examples.append(filename[:-5])  # Elimina la extensión .json
         
         return sorted(examples)
     
     def load_example(self, example_name: str) -> AFD:
         """
-        Load an example AFD from file.
+        Carga un AFD de ejemplo desde un archivo.
         
         Args:
-            example_name: Name of the example to load
+            example_name: Nombre del ejemplo a cargar
             
         Returns:
-            AFD instance loaded from the example file
+            Instancia de AFD cargada desde el archivo de ejemplo
             
         Raises:
-            FileNotFoundError: If the example file is not found
-            Exception: If there's an error loading the file
+            FileNotFoundError: Si el archivo de ejemplo no se encuentra
+            Exception: Si hay un error al cargar el archivo
         """
         filename = os.path.join(self.examples_directory, f"{example_name}.json")
         
         if not os.path.exists(filename):
             available = self.get_available_examples()
-            raise FileNotFoundError(f"Example '{example_name}' not found. Available examples: {available}")
+            raise FileNotFoundError(f"Ejemplo '{example_name}' no encontrado. Ejemplos disponibles: {available}")
         
         return AFD.load_from_file(filename)
     
     def save_example(self, afd: AFD, example_name: str) -> None:
         """
-        Save an AFD as an example.
+        Guarda un AFD como ejemplo.
         
         Args:
-            afd: The AFD to save
-            example_name: Name for the example file
+            afd: El AFD a guardar
+            example_name: Nombre para el archivo de ejemplo
         """
         if not os.path.exists(self.examples_directory):
             os.makedirs(self.examples_directory)
@@ -79,24 +79,24 @@ class ExampleLoader:
     
     def get_example_info(self, example_name: str) -> dict:
         """
-        Get information about an example AFD without loading it.
+        Obtiene información sobre un AFD de ejemplo sin cargarlo completamente.
         
         Args:
-            example_name: Name of the example
+            example_name: Nombre del ejemplo
             
         Returns:
-            Dictionary with example information
+            Diccionario con información del ejemplo
             
         Raises:
-            FileNotFoundError: If the example file is not found
+            FileNotFoundError: Si el archivo de ejemplo no se encuentra
         """
         filename = os.path.join(self.examples_directory, f"{example_name}.json")
         
         if not os.path.exists(filename):
             available = self.get_available_examples()
-            raise FileNotFoundError(f"Example '{example_name}' not found. Available examples: {available}")
+            raise FileNotFoundError(f"Ejemplo '{example_name}' no encontrado. Ejemplos disponibles: {available}")
         
-        # Load and return summary information
+        # Carga y retorna información resumida
         afd = AFD.load_from_file(filename)
         
         return {
