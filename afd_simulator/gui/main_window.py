@@ -268,13 +268,13 @@ class AFDSimulatorGUI:
             return
         
         try:
-            accepted_strings = self.current_afd.generate_accepted_strings(20)
+            accepted_strings = self.current_afd.generate_accepted_strings(10)
             
             if accepted_strings:
                 string_list = "\n".join(f"{i+1:2d}. '{s}'" for i, s in enumerate(accepted_strings))
                 messagebox.showinfo(
                     "Accepted Strings", 
-                    f"First 20 accepted strings:\n\n{string_list}"
+                    f"First 10 accepted strings:\n\n{string_list}"
                 )
             else:
                 messagebox.showinfo("Accepted Strings", "No accepted strings found.")
