@@ -29,25 +29,39 @@ class StringEvaluator:
         self.parent = parent
         self.main_app = main_app
         
+        # Create main scrollable frame
+        self.main_frame = ttk.Frame(parent)
+        self.canvas = tk.Canvas(self.main_frame)
+        self.scrollbar = ttk.Scrollbar(self.main_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas)
+        
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+        
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        
         self.create_widgets()
         self.setup_layout()
     
     def create_widgets(self):
         """Create all GUI widgets."""
         # Input section
-        self.input_frame = ttk.LabelFrame(self.parent, text=STRING_EVALUATION, padding=10)
+        self.input_frame = ttk.LabelFrame(self.scrollable_frame, text=STRING_EVALUATION, padding=10)
         self.input_label = ttk.Label(self.input_frame, text=ENTER_STRING_TO_EVALUATE)
         self.string_entry = ttk.Entry(self.input_frame, width=40)
         self.evaluate_btn = ttk.Button(self.input_frame, text=EVALUATE, command=self.evaluate_string)
         self.clear_btn = ttk.Button(self.input_frame, text=CLEAR, command=self.clear_evaluation)
         
         # Results section
-        self.results_frame = ttk.LabelFrame(self.parent, text=EVALUATION_RESULTS, padding=10)
+        self.results_frame = ttk.LabelFrame(self.scrollable_frame, text=EVALUATION_RESULTS, padding=10)
         self.result_label = ttk.Label(self.results_frame, text=NO_STRING_EVALUATED)
         self.result_label.config(font=("Arial", 12, "bold"))
         
-        # Step-by-step visualization
-        self.steps_frame = ttk.LabelFrame(self.parent, text=STEP_BY_STEP_PROCESS, padding=10)
+        # Step-by-step visualization with scrollbar
+        self.steps_frame = ttk.LabelFrame(self.scrollable_frame, text=STEP_BY_STEP_PROCESS, padding=10)
         self.steps_tree = ttk.Treeview(
             self.steps_frame, 
             columns=(STEP, FROM, SYMBOL, TO, DESCRIPTION), 
@@ -71,7 +85,7 @@ class StringEvaluator:
         self.steps_tree.column(DESCRIPTION, width=300)
         
         # Batch evaluation section
-        self.batch_frame = ttk.LabelFrame(self.parent, text=BATCH_STRING_EVALUATION, padding=10)
+        self.batch_frame = ttk.LabelFrame(self.scrollable_frame, text=BATCH_STRING_EVALUATION, padding=10)
         self.batch_label = ttk.Label(self.batch_frame, text=ENTER_MULTIPLE_STRINGS)
         # Contenedor para texto y scrollbar
         self.batch_text_container = ttk.Frame(self.batch_frame)
@@ -82,8 +96,8 @@ class StringEvaluator:
         self.batch_clear_btn = ttk.Button(self.batch_frame, text=CLEAR, command=self.clear_batch)
         self.batch_load_btn = ttk.Button(self.batch_frame, text="Cargar desde archivo", command=self.load_batch_from_file)
         
-        # Batch results
-        self.batch_results_frame = ttk.LabelFrame(self.parent, text=BATCH_RESULTS, padding=10)
+        # Batch results with scrollbar
+        self.batch_results_frame = ttk.LabelFrame(self.scrollable_frame, text=BATCH_RESULTS, padding=10)
         self.batch_results_tree = ttk.Treeview(
             self.batch_results_frame,
             columns=(STRING, RESULT, STEPS),
@@ -103,6 +117,11 @@ class StringEvaluator:
     
     def setup_layout(self):
         """Setup the layout of widgets."""
+        # Main frame with scrollbar
+        self.main_frame.pack(fill="both", expand=True)
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
+        
         # Input section
         self.input_frame.pack(fill="x", padx=10, pady=5)
         self.input_label.pack(anchor="w")
