@@ -1,9 +1,9 @@
 """
-Deterministic Finite Automaton (DFA) Implementation
+Implementación de Autómata Finito Determinista (AFD)
 
-This module contains the AFD class that represents a deterministic finite automaton
-with all five required components: states (Q), alphabet (Σ), initial state (q₀),
-accepting states (F), and transition function (δ).
+Este módulo contiene la clase AFD que representa un autómata finito determinista
+con los cinco componentes requeridos: estados (Q), alfabeto (Σ), estado inicial (q₀),
+estados de aceptación (F) y función de transición (δ).
 """
 
 import json
@@ -12,18 +12,18 @@ from typing import Set, Dict, List, Tuple, Optional
 
 class AFD:
     """
-    Represents a Deterministic Finite Automaton (DFA).
+    Representa un Autómata Finito Determinista (AFD).
     
-    A DFA is defined by the 5-tuple (Q, Σ, δ, q₀, F) where:
-    - Q: Finite set of states
-    - Σ: Alphabet (set of input symbols)
-    - δ: Transition function Q × Σ → Q
-    - q₀: Initial state
-    - F: Set of accepting states
+    Un AFD se define mediante la 5-tupla (Q, Σ, δ, q₀, F) donde:
+    - Q: Conjunto finito de estados
+    - Σ: Alfabeto (conjunto de símbolos de entrada)
+    - δ: Función de transición Q × Σ → Q
+    - q₀: Estado inicial
+    - F: Conjunto de estados de aceptación
     """
     
     def __init__(self):
-        """Initialize an empty AFD."""
+        """Inicializa un AFD vacío."""
         self.states: Set[str] = set()
         self.alphabet: Set[str] = set()
         self.initial_state: Optional[str] = None
@@ -32,79 +32,79 @@ class AFD:
     
     def add_state(self, state: str) -> None:
         """
-        Add a state to the AFD.
+        Agrega un estado al AFD.
         
         Args:
-            state: The state identifier to add
+            state: El identificador del estado a agregar
         """
         self.states.add(state)
     
     def add_symbol(self, symbol: str) -> None:
         """
-        Add a symbol to the alphabet.
+        Agrega un símbolo al alfabeto.
         
         Args:
-            symbol: The symbol to add to the alphabet
+            symbol: El símbolo a agregar al alfabeto
         """
         self.alphabet.add(symbol)
     
     def set_initial_state(self, state: str) -> None:
         """
-        Set the initial state of the AFD.
+        Establece el estado inicial del AFD.
         
         Args:
-            state: The initial state identifier
+            state: El identificador del estado inicial
             
         Raises:
-            ValueError: If the state is not in the set of states
+            ValueError: Si el estado no está en el conjunto de estados
         """
         if state not in self.states:
-            raise ValueError(f"State '{state}' is not in the set of states")
+            raise ValueError(f"El estado '{state}' no está en el conjunto de estados")
         self.initial_state = state
     
     def add_accepting_state(self, state: str) -> None:
         """
-        Add a state to the set of accepting states.
+        Agrega un estado al conjunto de estados de aceptación.
         
         Args:
-            state: The accepting state identifier
+            state: El identificador del estado de aceptación
             
         Raises:
-            ValueError: If the state is not in the set of states
+            ValueError: Si el estado no está en el conjunto de estados
         """
         if state not in self.states:
-            raise ValueError(f"State '{state}' is not in the set of states")
+            raise ValueError(f"El estado '{state}' no está en el conjunto de estados")
         self.accepting_states.add(state)
     
     def add_transition(self, from_state: str, symbol: str, to_state: str) -> None:
         """
-        Add a transition to the transition function.
+        Agrega una transición a la función de transición.
         
         Args:
-            from_state: Source state of the transition
-            symbol: Input symbol that triggers the transition
-            to_state: Destination state of the transition
+            from_state: Estado origen de la transición
+            symbol: Símbolo de entrada que activa la transición
+            to_state: Estado destino de la transición
             
         Raises:
-            ValueError: If any of the states or symbol are not defined
+            ValueError: Si alguno de los estados o el símbolo no están definidos
         """
         if from_state not in self.states:
-            raise ValueError(f"Source state '{from_state}' is not in the set of states")
+            raise ValueError(f"El estado origen '{from_state}' no está en el conjunto de estados")
         if to_state not in self.states:
-            raise ValueError(f"Destination state '{to_state}' is not in the set of states")
+            raise ValueError(f"El estado destino '{to_state}' no está en el conjunto de estados")
         if symbol not in self.alphabet:
-            raise ValueError(f"Symbol '{symbol}' is not in the alphabet")
+            raise ValueError(f"El símbolo '{symbol}' no está en el alfabeto")
         
         self.transitions[(from_state, symbol)] = to_state
     
     def is_valid(self) -> bool:
         """
-        Check if the AFD is properly defined.
+        Verifica si el AFD está correctamente definido.
         
         Returns:
-            True if the AFD is valid, False otherwise
+            True si el AFD es válido, False en caso contrario
         """
-        # Check if all required components are defined
+        # Verifica si todos los componentes requeridos están definidos
         if not self.states:
             return False
         if not self.alphabet:
@@ -116,7 +116,7 @@ class AFD:
         if not self.accepting_states.issubset(self.states):
             return False
         
-        # Check if all transitions are defined for all state-symbol pairs
+        # Verifica si todas las transiciones están definidas para cada par estado-símbolo
         for state in self.states:
             for symbol in self.alphabet:
                 if (state, symbol) not in self.transitions:
@@ -126,81 +126,81 @@ class AFD:
     
     def evaluate_string(self, input_string: str) -> Tuple[bool, List[Tuple[str, str, str]]]:
         """
-        Evaluate if a string is accepted by the AFD.
+        Evalúa si una cadena es aceptada por el AFD.
         
         Args:
-            input_string: The string to evaluate
+            input_string: La cadena a evaluar
             
         Returns:
-            A tuple containing:
-            - Boolean indicating if the string is accepted
-            - List of transitions showing the path taken
+            Una tupla que contiene:
+            - Booleano indicando si la cadena es aceptada
+            - Lista de transiciones mostrando el camino recorrido
             
         Raises:
-            ValueError: If the AFD is not valid or contains invalid symbols
+            ValueError: Si el AFD no es válido o contiene símbolos inválidos
         """
         if not self.is_valid():
-            raise ValueError("AFD is not properly defined")
+            raise ValueError("El AFD no está correctamente definido")
         
-        # Check if all symbols in the string are in the alphabet
+        # Verifica si todos los símbolos de la cadena están en el alfabeto
         for symbol in input_string:
             if symbol not in self.alphabet:
-                raise ValueError(f"Symbol '{symbol}' is not in the alphabet")
+                raise ValueError(f"El símbolo '{symbol}' no está en el alfabeto")
         
-        # Simulate the AFD
+        # Simula el AFD
         current_state = self.initial_state
         transitions_path = []
         
         for symbol in input_string:
             next_state = self.transitions.get((current_state, symbol))
             if next_state is None:
-                raise ValueError(f"No transition defined for state '{current_state}' with symbol '{symbol}'")
+                raise ValueError(f"No hay transición definida para el estado '{current_state}' con el símbolo '{symbol}'")
             
             transitions_path.append((current_state, symbol, next_state))
             current_state = next_state
         
-        # Check if final state is accepting
+        # Verifica si el estado final es de aceptación
         is_accepted = current_state in self.accepting_states
         
         return is_accepted, transitions_path
     
     def generate_accepted_strings(self, max_count: int = 10) -> List[str]:
         """
-        Generate the first n shortest strings accepted by the AFD.
+        Genera las primeras n cadenas más cortas aceptadas por el AFD.
         
         Args:
-            max_count: Maximum number of strings to generate
+            max_count: Número máximo de cadenas a generar
             
         Returns:
-            List of accepted strings in order of length
+            Lista de cadenas aceptadas ordenadas por longitud
             
         Raises:
-            ValueError: If the AFD is not valid
+            ValueError: Si el AFD no es válido
         """
         if not self.is_valid():
-            raise ValueError("AFD is not properly defined")
+            raise ValueError("El AFD no está correctamente definido")
         
         accepted_strings = []
         alphabet_list = list(self.alphabet)
         
-        # Use BFS to find shortest paths to accepting states
+        # Usa BFS para encontrar los caminos más cortos a los estados de aceptación
         queue = [("", self.initial_state)]
         visited = set()
         
         while queue and len(accepted_strings) < max_count:
             current_string, current_state = queue.pop(0)
             
-            # Skip if we've already visited this state with this string length
+            # Omite si ya hemos visitado este estado con esta longitud de cadena
             state_length_key = (current_state, len(current_string))
             if state_length_key in visited:
                 continue
             visited.add(state_length_key)
             
-            # If current state is accepting, add string to results
+            # Si el estado actual es de aceptación, agrega la cadena a los resultados
             if current_state in self.accepting_states and current_string:
                 accepted_strings.append(current_string)
             
-            # Add transitions for each symbol
+            # Agrega transiciones para cada símbolo
             for symbol in alphabet_list:
                 next_state = self.transitions.get((current_state, symbol))
                 if next_state is not None:
@@ -211,10 +211,10 @@ class AFD:
     
     def save_to_file(self, filename: str) -> None:
         """
-        Save the AFD definition to a JSON file.
+        Guarda la definición del AFD en un archivo JSON.
         
         Args:
-            filename: Name of the file to save to
+            filename: Nombre del archivo donde guardar
         """
         afd_data = {
             "states": list(self.states),
@@ -231,35 +231,35 @@ class AFD:
     @classmethod
     def load_from_file(cls, filename: str) -> 'AFD':
         """
-        Load an AFD definition from a JSON file.
+        Carga la definición de un AFD desde un archivo JSON.
         
         Args:
-            filename: Name of the file to load from
+            filename: Nombre del archivo a cargar
             
         Returns:
-            AFD instance loaded from the file
+            Instancia de AFD cargada desde el archivo
         """
         with open(filename, 'r', encoding='utf-8') as f:
             afd_data = json.load(f)
         
         afd = cls()
         
-        # Load states
+        # Carga los estados
         for state in afd_data["states"]:
             afd.add_state(state)
         
-        # Load alphabet
+        # Carga el alfabeto
         for symbol in afd_data["alphabet"]:
             afd.add_symbol(symbol)
         
-        # Load initial state
+        # Carga el estado inicial
         afd.set_initial_state(afd_data["initial_state"])
         
-        # Load accepting states
+        # Carga los estados de aceptación
         for state in afd_data["accepting_states"]:
             afd.add_accepting_state(state)
         
-        # Load transitions
+        # Carga las transiciones
         for transition_key, to_state in afd_data["transitions"].items():
             from_state, symbol = transition_key.split(',')
             afd.add_transition(from_state, symbol, to_state)
@@ -267,13 +267,13 @@ class AFD:
         return afd
     
     def __str__(self) -> str:
-        """Return a string representation of the AFD."""
-        return f"""AFD Definition:
-States (Q): {sorted(self.states)}
-Alphabet (Σ): {sorted(self.alphabet)}
-Initial State (q₀): {self.initial_state}
-Accepting States (F): {sorted(self.accepting_states)}
-Transitions (δ):
+        """Retorna una representación en cadena del AFD."""
+        return f"""Definición del AFD:
+Estados (Q): {sorted(self.states)}
+Alfabeto (Σ): {sorted(self.alphabet)}
+Estado Inicial (q₀): {self.initial_state}
+Estados de Aceptación (F): {sorted(self.accepting_states)}
+Transiciones (δ):
 {chr(10).join(f"  δ({from_state}, {symbol}) = {to_state}" 
               for (from_state, symbol), to_state in sorted(self.transitions.items()))}
-Valid: {self.is_valid()}"""
+Válido: {self.is_valid()}"""
