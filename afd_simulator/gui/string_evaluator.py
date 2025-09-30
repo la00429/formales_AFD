@@ -6,7 +6,7 @@ against AFD definitions with step-by-step visualization.
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from typing import Optional, List, Tuple
 
 from ..core.afd import AFD
@@ -54,6 +54,8 @@ class StringEvaluator:
             show="headings", 
             height=10
         )
+        self.steps_scrollbar = ttk.Scrollbar(self.steps_frame, orient="vertical", command=self.steps_tree.yview)
+        self.steps_tree.configure(yscrollcommand=self.steps_scrollbar.set)
         
         # Configure tree columns
         self.steps_tree.heading(STEP, text=STEP)
@@ -71,9 +73,14 @@ class StringEvaluator:
         # Batch evaluation section
         self.batch_frame = ttk.LabelFrame(self.parent, text=BATCH_STRING_EVALUATION, padding=10)
         self.batch_label = ttk.Label(self.batch_frame, text=ENTER_MULTIPLE_STRINGS)
-        self.batch_text = tk.Text(self.batch_frame, height=6, width=50)
+        # Contenedor para texto y scrollbar
+        self.batch_text_container = ttk.Frame(self.batch_frame)
+        self.batch_text = tk.Text(self.batch_text_container, height=6, width=50)
+        self.batch_text_scrollbar = ttk.Scrollbar(self.batch_text_container, orient="vertical", command=self.batch_text.yview)
+        self.batch_text.configure(yscrollcommand=self.batch_text_scrollbar.set)
         self.batch_evaluate_btn = ttk.Button(self.batch_frame, text=EVALUATE_ALL, command=self.evaluate_batch)
         self.batch_clear_btn = ttk.Button(self.batch_frame, text=CLEAR, command=self.clear_batch)
+        self.batch_load_btn = ttk.Button(self.batch_frame, text="Cargar desde archivo", command=self.load_batch_from_file)
         
         # Batch results
         self.batch_results_frame = ttk.LabelFrame(self.parent, text=BATCH_RESULTS, padding=10)
@@ -83,6 +90,8 @@ class StringEvaluator:
             show="headings",
             height=8
         )
+        self.batch_results_scrollbar = ttk.Scrollbar(self.batch_results_frame, orient="vertical", command=self.batch_results_tree.yview)
+        self.batch_results_tree.configure(yscrollcommand=self.batch_results_scrollbar.set)
         
         self.batch_results_tree.heading(STRING, text=STRING)
         self.batch_results_tree.heading(RESULT, text=RESULT)
@@ -109,20 +118,25 @@ class StringEvaluator:
         
         # Steps section
         self.steps_frame.pack(fill="both", expand=True, padx=10, pady=5)
-        self.steps_tree.pack(fill="both", expand=True)
+        self.steps_tree.pack(side="left", fill="both", expand=True)
+        self.steps_scrollbar.pack(side="right", fill="y")
         
         # Batch evaluation section
         self.batch_frame.pack(fill="x", padx=10, pady=5)
         self.batch_label.pack(anchor="w")
-        self.batch_text.pack(fill="x", pady=5)
+        self.batch_text_container.pack(fill="x", pady=5)
+        self.batch_text.pack(side="left", fill="both", expand=True)
+        self.batch_text_scrollbar.pack(side="right", fill="y")
         batch_buttons = ttk.Frame(self.batch_frame)
         batch_buttons.pack(fill="x")
         self.batch_evaluate_btn.pack(side="left", padx=(0, 5))
-        self.batch_clear_btn.pack(side="left")
+        self.batch_clear_btn.pack(side="left", padx=5)
+        self.batch_load_btn.pack(side="left")
         
         # Batch results section
         self.batch_results_frame.pack(fill="x", padx=10, pady=5)
-        self.batch_results_tree.pack(fill="x")
+        self.batch_results_tree.pack(side="left", fill="x", expand=True)
+        self.batch_results_scrollbar.pack(side="right", fill="y")
         
         # Bind Enter key to evaluation
         self.string_entry.bind("<Return>", lambda e: self.evaluate_string())
@@ -195,12 +209,12 @@ class StringEvaluator:
             messagebox.showwarning(WARNING, "El AFD actual no es válido. Completa su definición.")
             return
         
-        batch_text = self.batch_text.get("1.0", tk.END).strip()
-        if not batch_text:
+        batch_text = self.batch_text.get("1.0", tk.END)
+        if not batch_text.strip():
             messagebox.showwarning(WARNING, "Ingresa cadenas para evaluar.")
             return
         
-        strings = [s.strip() for s in batch_text.split('\n') if s.strip()]
+        strings = self._parse_batch_text(batch_text)
         if not strings:
             messagebox.showwarning(WARNING, "No se encontraron cadenas válidas.")
             return
@@ -229,6 +243,45 @@ class StringEvaluator:
         
         for item in self.batch_results_tree.get_children():
             self.batch_results_tree.delete(item)
+
+    def load_batch_from_file(self):
+        """Load batch strings from a text file into the batch text box."""
+        try:
+            filename = filedialog.askopenfilename(
+                title="Cargar cadenas",
+                filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+            )
+            if not filename:
+                return
+            with open(filename, 'r', encoding='utf-8') as f:
+                content = f.read()
+            self.batch_text.delete("1.0", tk.END)
+            self.batch_text.insert("1.0", content)
+            self.main_app.update_status(f"Cargadas cadenas desde {filename}")
+        except Exception as e:
+            messagebox.showerror(ERROR, f"No se pudo cargar el archivo: {e}")
+
+    def _parse_batch_text(self, raw_text: str) -> list:
+        """Parse batch input supporting common separators and comments.
+
+        - Admite separadores: nueva línea, coma, punto y coma, tabulaciones y espacios
+        - Ignora líneas vacías
+        - Ignora comentarios que inician con '#'
+        """
+        strings = []
+        # Normalizar saltos de línea y recorrer por líneas
+        for line in raw_text.splitlines():
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            # Reemplazar separadores comunes por espacio
+            normalized = line.replace(',', ' ').replace(';', ' ').replace('\t', ' ')
+            # Colapsar espacios múltiples y separar
+            for token in normalized.split():
+                token = token.strip()
+                if token:
+                    strings.append(token)
+        return strings
     
     def update_afd_info(self):
         """Update the interface when AFD changes."""
